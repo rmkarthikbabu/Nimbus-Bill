@@ -1,0 +1,1 @@
+import { Card, CardContent, Typography } from '@mui/material'; export default function Placeholder({title}:{title:string}){return <Card><CardContent><Typography variant="h4">{title}</Typography><Typography color="text.secondary" mt={1}>This module is reserved for the next implementation sprint.</Typography></CardContent></Card>}
