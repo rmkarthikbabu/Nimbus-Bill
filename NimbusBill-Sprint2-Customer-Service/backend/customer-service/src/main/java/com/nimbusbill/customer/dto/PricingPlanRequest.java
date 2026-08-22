@@ -1,0 +1,2 @@
+package com.nimbusbill.customer.dto; import jakarta.validation.Valid; import jakarta.validation.constraints.*; import java.time.LocalDate; import java.util.*;
+public record PricingPlanRequest(@NotBlank @Size(max=30) @Pattern(regexp="^[A-Z0-9_-]+$") String planCode,@NotBlank @Size(max=120) String planName,@Size(max=500) String description,@NotBlank @Pattern(regexp="^[A-Z]{3}$") String currency,@NotNull LocalDate effectiveFrom,LocalDate effectiveTo,@NotEmpty List<@Valid PricingRuleRequest> rules){}

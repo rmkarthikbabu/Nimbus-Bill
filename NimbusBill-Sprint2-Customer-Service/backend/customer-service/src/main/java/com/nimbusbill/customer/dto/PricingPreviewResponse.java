@@ -1,0 +1,2 @@
+package com.nimbusbill.customer.dto; import com.nimbusbill.customer.entity.PricingUnit; import java.math.BigDecimal; import java.util.UUID;
+public record PricingPreviewResponse(UUID planId,UUID versionId,int versionNumber,String productCode,PricingUnit chargeType,BigDecimal amount,BigDecimal baseFee,BigDecimal taxRate,BigDecimal taxAmount,BigDecimal totalCharge,String currency){}

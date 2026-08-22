@@ -1,0 +1,2 @@
+package com.nimbusbill.customer.repository; import com.nimbusbill.customer.entity.CustomerProduct; import org.springframework.data.jpa.repository.JpaRepository; import java.util.*;
+public interface CustomerProductRepository extends JpaRepository<CustomerProduct,UUID>{List<CustomerProduct> findByCustomerIdOrderByProductProductName(UUID customerId);Optional<CustomerProduct> findByCustomerIdAndProductId(UUID customerId,UUID productId);}

@@ -1,0 +1,2 @@
+package com.nimbusbill.customer.dto; import com.nimbusbill.customer.entity.PricingUnit; import jakarta.validation.Valid; import jakarta.validation.constraints.*; import java.math.BigDecimal; import java.util.*;
+public record PricingRuleRequest(@NotNull UUID productId,@NotNull PricingUnit chargeType,@DecimalMin("0") BigDecimal fixedFee,@DecimalMin("0") BigDecimal percentageRate,@DecimalMin("0") BigDecimal minimumFee,@DecimalMin("0") BigDecimal maximumFee,@NotNull @DecimalMin("0") BigDecimal taxRate,@Min(1) int priority,List<@Valid PricingSlabRequest> slabs){}
