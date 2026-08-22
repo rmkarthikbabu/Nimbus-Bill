@@ -1,0 +1,3 @@
+package com.nimbusbill.customer.dto;
+import com.nimbusbill.customer.entity.PricingUnit; import com.nimbusbill.customer.entity.ProductStatus; import jakarta.validation.constraints.*; import java.math.BigDecimal; import java.time.LocalDate;
+public record ProductRequest(@NotBlank @Size(max=30) @Pattern(regexp="^[A-Z0-9_-]+$") String productCode,@NotBlank @Size(max=120) String productName,@Size(max=500) String description,@NotNull PricingUnit pricingUnit,@DecimalMin("0.0") BigDecimal minimumFee,@DecimalMin("0.0") BigDecimal maximumFee,boolean taxApplicable,@NotNull ProductStatus status,@NotNull LocalDate effectiveFrom,LocalDate effectiveTo){}

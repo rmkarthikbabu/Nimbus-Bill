@@ -1,0 +1,135 @@
+Phase 3 should deliver Payment Product and Pricing Management.
+Step 1: Define pricing rules
+Finalize supported charging models:
+- Fixed fee per transaction
+- Percentage fee
+- Volume/slab pricing
+- Minimum and maximum fees
+- Currency-specific pricing
+- Effective dates
+- Customer-specific overrides
+- Tax applicability
+Define rounding, overlapping-date, and slab-boundary rules before implementation.
+Step 2: Create the Product Catalogue
+Add entities and migrations for:
+payment_products
+product_transaction_types
+product_currencies
+Implement products such as UPI, NEFT, RTGS, IMPS, Cards, and SWIFT.
+Required APIs:
+POST /api/v1/products
+GET  /api/v1/products
+GET  /api/v1/products/{id}
+PUT  /api/v1/products/{id}
+POST /api/v1/products/{id}/activate
+POST /api/v1/products/{id}/deactivate
+Step 3: Implement pricing plans
+Add:
+pricing_plans
+pricing_plan_versions
+pricing_rules
+pricing_slabs
+Support Standard, Premium, Enterprise, and Custom plans.
+Each published version must be immutable so historical invoices retain the pricing used at generation time.
+Step 4: Add pricing lifecycle
+Recommended states:
+DRAFT
+PENDING_APPROVAL
+APPROVED
+ACTIVE
+REJECTED
+EXPIRED
+Required actions:
+POST /pricing-plans/{id}/submit
+POST /pricing-plans/{id}/approve
+POST /pricing-plans/{id}/reject
+POST /pricing-plans/{id}/activate
+POST /pricing-plans/{id}/clone
+Prevent the same plan from having overlapping active versions.
+Step 5: Assign products to customers
+Create:
+customer_products
+Support:
+- Enable or disable products
+- Activation and expiry dates
+- Billing-account assignment
+- Product-specific limits
+- Assignment history
+APIs:
+GET /customers/{id}/products
+PUT /customers/{id}/products
+Step 6: Assign pricing to customers
+Create:
+customer_pricing_assignments
+pricing_overrides
+Support:
+- Customer-level plans
+- Billing-account-level plans
+- Product-level overrides
+- Future-dated pricing changes
+- Rollback to previous versions
+Step 7: Build a pricing preview engine
+Add an API that calculates charges without saving a transaction:
+POST /api/v1/pricing/preview
+Example input:
+{
+  "customerId": "uuid",
+  "productCode": "UPI",
+  "amount": 50000,
+  "currency": "INR",
+  "transactionDate": "2026-09-01"
+}
+Return the matched plan, rule, slab, base fee, tax, and total charge.
+Step 8: Apply RBAC and approval controls
+Recommended permissions:
+- Admin: full access
+- Billing Manager: create and submit pricing
+- Finance: review and approve
+- Operations: manage product assignments
+- Auditor: pricing and approval history
+- Read Only: view access
+Prevent the person who created a pricing change from approving it.
+Step 9: Add audit and notifications
+Record:
+- Old and new pricing
+- Actor and role
+- Approval comments
+- Timestamp and IP address
+- Effective dates
+Notify relevant users when pricing is submitted, approved, rejected, activated, or nearing expiry.
+Step 10: Build React screens
+Implement:
+- Product catalogue
+- Product create/edit form
+- Pricing-plan list
+- Pricing-plan editor
+- Slab editor
+- Pricing comparison/version history
+- Approval queue
+- Customer-product assignment
+- Customer-pricing assignment
+- Pricing preview calculator
+Step 11: Test thoroughly
+Backend tests should cover:
+- Fixed, percentage, and slab calculations
+- Minimum and maximum fees
+- Slab boundaries
+- Date and currency matching
+- Overlapping versions
+- Approval permissions
+- Maker-checker enforcement
+- Customer overrides
+- Audit creation
+Add frontend component and API integration tests for the main workflows.
+Step 12: Release criteria
+Phase 3 is complete when:
+- Product and pricing screens contain no mock operations
+- Pricing is versioned and effective-dated
+- Products and pricing can be assigned to customers
+- Approval and RBAC rules are enforced
+- Pricing preview produces verified results
+- All changes are audited
+- Migrations run automatically
+- Backend tests and frontend build pass
+- Docker starts the complete environment
+- Phase 3 changes are committed and pushed through a dedicated Git branch, such as phase-3-pricing-products

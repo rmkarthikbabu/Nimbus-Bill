@@ -1,0 +1,15 @@
+package com.nimbusbill.customer.service;
+import com.nimbusbill.customer.dto.*; import com.nimbusbill.customer.entity.*; import com.nimbusbill.customer.exception.*; import com.nimbusbill.customer.repository.PaymentProductRepository; import org.springframework.stereotype.Service; import org.springframework.transaction.annotation.Transactional; import java.util.*;
+@Service @Transactional
+public class ProductService {
+ private final PaymentProductRepository repository; public ProductService(PaymentProductRepository repository){this.repository=repository;}
+ public ProductResponse create(ProductRequest r){validate(r);if(repository.existsByProductCodeIgnoreCase(r.productCode()))throw new ConflictException("Product code already exists: "+r.productCode());return response(repository.save(apply(new PaymentProduct(),r)));}
+ @Transactional(readOnly=true) public List<ProductResponse> list(ProductStatus status){return (status==null?repository.findAllByOrderByProductName():repository.findByStatusOrderByProductName(status)).stream().map(this::response).toList();}
+ @Transactional(readOnly=true) public ProductResponse get(UUID id){return response(find(id));}
+ public ProductResponse update(UUID id,ProductRequest r){validate(r);if(repository.existsByProductCodeIgnoreCaseAndIdNot(r.productCode(),id))throw new ConflictException("Product code already exists: "+r.productCode());return response(repository.save(apply(find(id),r)));}
+ public ProductResponse status(UUID id,ProductStatus status){PaymentProduct p=find(id);p.setStatus(status);return response(repository.save(p));}
+ private PaymentProduct find(UUID id){return repository.findById(id).orElseThrow(()->new ResourceNotFoundException("Product not found: "+id));}
+ private void validate(ProductRequest r){if(r.minimumFee()!=null&&r.maximumFee()!=null&&r.minimumFee().compareTo(r.maximumFee())>0)throw new IllegalArgumentException("minimumFee cannot exceed maximumFee");if(r.effectiveTo()!=null&&r.effectiveTo().isBefore(r.effectiveFrom()))throw new IllegalArgumentException("effectiveTo cannot precede effectiveFrom");}
+ private PaymentProduct apply(PaymentProduct p,ProductRequest r){p.setProductCode(r.productCode().trim().toUpperCase());p.setProductName(r.productName().trim());p.setDescription(r.description()==null||r.description().isBlank()?null:r.description().trim());p.setPricingUnit(r.pricingUnit());p.setMinimumFee(r.minimumFee());p.setMaximumFee(r.maximumFee());p.setTaxApplicable(r.taxApplicable());p.setStatus(r.status());p.setEffectiveFrom(r.effectiveFrom());p.setEffectiveTo(r.effectiveTo());return p;}
+ private ProductResponse response(PaymentProduct p){return new ProductResponse(p.getId(),p.getProductCode(),p.getProductName(),p.getDescription(),p.getPricingUnit(),p.getMinimumFee(),p.getMaximumFee(),p.isTaxApplicable(),p.getStatus(),p.getEffectiveFrom(),p.getEffectiveTo(),p.getCreatedAt(),p.getUpdatedAt(),p.getVersion());}
+}

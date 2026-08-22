@@ -31,6 +31,11 @@ public class GlobalExceptionHandler {
         return response(HttpStatus.BAD_REQUEST, "Validation failed", request, errors);
     }
 
+    @ExceptionHandler(IllegalArgumentException.class)
+    ResponseEntity<ApiError> invalid(IllegalArgumentException ex, HttpServletRequest request) {
+        return response(HttpStatus.BAD_REQUEST, ex.getMessage(), request, Map.of());
+    }
+
     @ExceptionHandler(Exception.class)
     ResponseEntity<ApiError> generic(Exception ex, HttpServletRequest request) {
         return response(HttpStatus.INTERNAL_SERVER_ERROR, "Unexpected server error", request, Map.of());
