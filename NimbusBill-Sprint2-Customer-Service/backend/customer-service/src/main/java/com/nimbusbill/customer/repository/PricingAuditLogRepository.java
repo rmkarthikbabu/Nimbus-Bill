@@ -1,0 +1,1 @@
+package com.nimbusbill.customer.repository;import com.nimbusbill.customer.entity.PricingAuditLog;import org.springframework.data.jpa.repository.JpaRepository;import java.util.*;public interface PricingAuditLogRepository extends JpaRepository<PricingAuditLog,UUID>{List<PricingAuditLog> findByEntityTypeAndEntityIdOrderByCreatedAtDesc(String entityType,UUID entityId);}

@@ -19,6 +19,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Instant;
 import java.util.UUID;
 import java.util.List;
 import tools.jackson.databind.ObjectMapper;
@@ -103,7 +104,9 @@ public class CustomerService {
 
     private void audit(UUID customerId, String action, String oldValue, String newValue, String actor, String ipAddress) {
         AuditLog log = new AuditLog(); log.setCustomerId(customerId); log.setAction(action); log.setOldValue(oldValue); log.setNewValue(newValue);
-        log.setActor(actor == null || actor.isBlank() ? "system" : actor); log.setIpAddress(ipAddress); auditRepository.save(log);
+        log.setActor(actor == null || actor.isBlank() ? "system" : actor); log.setIpAddress(ipAddress);
+        Instant now=Instant.now(); Instant ordered=auditRepository.findFirstByCustomerIdOrderByCreatedAtDesc(customerId).map(AuditLog::getCreatedAt).map(t->t.plusMillis(1)).filter(t->t.isAfter(now)).orElse(now);log.setCreatedAt(ordered);
+        auditRepository.save(log);
     }
 
     private String json(CustomerResponse response) { try { return objectMapper.writeValueAsString(response); } catch (Exception ex) { return "{}"; } }

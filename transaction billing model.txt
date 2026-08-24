@@ -1,0 +1,169 @@
+Internal Transfer Transactions scope:
+Client initiate the transfer from X account to Y account
+Steps of transactions:
+	System will do fund check from X account
+	if acct balance is good move the fund from X account to Xa account - 1 transaction
+	then move the funds from Xa acct to Ya acct - 2nd transaction
+	then move the funds from Ya acct to Y acct - 3rd transaction.
+all the above steps will be considered as 1 transaction.
+we need 1 unique id number for all these 3 transaction to be tied up and charge only once to client. 
+Client can initiate 10 transactions at the same second too which need to be handled.
+what will be our data model approach for this?
+
+
+
+
+
+
+
+8:06 AM
+
+
+
+
+
+
+Use a parent transaction with three linked transfer legs. The parent represents the client-visible transaction and is the unit used for billing.
+Recommended model
+Client Transfer (one logical transaction)
+        │
+        ├── Leg 1: X  → Xa
+        ├── Leg 2: Xa → Ya
+        └── Leg 3: Ya → Y
+1. transfer_transactions
+One record per client request.
+Column	Purpose
+transfer_id	Internal UUID/ULID; common ID for all three legs
+client_reference_id	Client-provided idempotency key
+customer_id	Initiating customer
+source_account_id	X account
+destination_account_id	Y account
+amount	Total transfer amount
+currency	Transfer currency
+status	Current overall state
+current_step	Last completed processing step
+billing_status	NOT_BILLED, BILLED, REVERSED
+pricing_plan_version_id	Pricing version selected for the transfer
+failure_code	Failure reason
+created_at	Request time
+completed_at	Completion time
+version	Optimistic-lock version
+
+
+Suggested statuses:
+RECEIVED
+FUNDS_CHECKED
+IN_PROGRESS
+COMPLETED
+FAILED
+REVERSING
+REVERSED
+Important constraints:
+UNIQUE (customer_id, client_reference_id)
+UNIQUE (transfer_id)
+The first constraint prevents retries or duplicate submissions from creating another transfer.
+2. transfer_legs
+One record for each internal movement.
+Column	Purpose
+leg_id	Unique identifier for this leg
+transfer_id	Parent/common transaction ID
+leg_sequence	1, 2, or 3
+leg_type	SOURCE_TO_XA, XA_TO_YA, YA_TO_DESTINATION
+debit_account_id	Account being debited
+credit_account_id	Account being credited
+amount	Leg amount
+currency	Currency
+status	PENDING, POSTED, FAILED, REVERSED
+ledger_reference	Reference returned by the ledger
+posted_at	Posting time
+failure_code	Leg failure reason
+
+
+Constraints:
+UNIQUE (transfer_id, leg_sequence)
+UNIQUE (ledger_reference)
+All three rows contain the same transfer_id, providing the required correlation.
+3. Double-entry ledger
+Do not update an account balance directly without corresponding ledger entries.
+ledger_transactions
+- ledger_transaction_id
+- transfer_id
+- leg_id
+- transaction_type
+- status
+- posted_at
+
+ledger_entries
+- entry_id
+- ledger_transaction_id
+- account_id
+- entry_type: DEBIT or CREDIT
+- amount
+- currency
+- created_at
+Each leg produces balanced entries:
+Leg 1: Debit X,  Credit Xa
+Leg 2: Debit Xa, Credit Ya
+Leg 3: Debit Ya, Credit Y
+For every ledger transaction:
+Total debits = Total credits
+4. Account balances and fund reservation
+Use a reservation so ten simultaneous transfers cannot all pass the funds check against the same balance.
+account_balances
+- account_id
+- ledger_balance
+- available_balance
+- version
+- updated_at
+
+fund_reservations
+- reservation_id
+- transfer_id
+- account_id
+- amount
+- status: ACTIVE, CONSUMED, RELEASED, EXPIRED
+- expires_at
+The funds-check operation should atomically:
+1. Lock the source balance row or use an atomic conditional update.
+2. Verify available_balance >= amount.
+3. Reduce the available balance.
+4. Create the reservation.
+5. Commit.
+Example atomic approach:
+UPDATE account_balances
+SET available_balance = available_balance - :amount,
+    version = version + 1
+WHERE account_id = :accountId
+  AND currency = :currency
+  AND available_balance >= :amount;
+Exactly one row must be updated. Otherwise, return insufficient funds. This safely serializes competing requests without relying only on application-level checks.
+5. Charge only once
+Billing must reference the parent transfer, never individual legs.
+billable_events
+- billable_event_id
+- transfer_id
+- customer_id
+- event_type: INTERNAL_TRANSFER_COMPLETED
+- pricing_plan_version_id
+- charge_amount
+- currency
+- status
+- created_at
+Constraint:
+UNIQUE (transfer_id, event_type)
+Create the billing event only when the parent reaches COMPLETED. Even if the event is submitted or consumed more than once, this unique constraint guarantees a single charge.
+6. Concurrent requests and identifiers
+Use:
+- transfer_id: server-generated UUIDv7 or ULID.
+- client_reference_id: unique value supplied by the client for every logical transfer.
+- leg_id: separate identifier for each internal leg.
+- transfer_id: propagated through APIs, database rows, events, logs and billing.
+Ten requests arriving in the same second remain distinct because IDs are not timestamp-only. If the same request is retried, client_reference_id returns the original result instead of creating another transfer.
+7. Failure handling
+Treat this as a stateful workflow or saga, not one long database transaction across systems.
+Leg 1 fails → release source reservation
+Leg 2 fails → reverse Leg 1
+Leg 3 fails → reverse Leg 2, then reverse Leg 1
+All legs post → mark parent COMPLETED and create one billable event
+Store reversal legs as new immutable ledger transactions linked to the original legs. Never delete or overwrite posted financial entries.
+The key rule is: transfer_transactions is the client and billing transaction, while transfer_legs and ledger_entries are its internal accounting movements.

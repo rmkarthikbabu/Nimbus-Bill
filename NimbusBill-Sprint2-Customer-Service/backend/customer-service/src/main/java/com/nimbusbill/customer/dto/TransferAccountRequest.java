@@ -1,0 +1,2 @@
+package com.nimbusbill.customer.dto; import com.nimbusbill.customer.entity.TransferAccount; import jakarta.validation.constraints.*; import java.math.BigDecimal; import java.util.UUID;
+public record TransferAccountRequest(UUID customerId,@NotBlank String accountNumber,@NotBlank String accountName,@NotNull TransferAccount.AccountType accountType,@NotBlank @Size(min=3,max=3) String currency,@NotNull @DecimalMin("0.00") BigDecimal openingBalance){}

@@ -1,0 +1,2 @@
+package com.nimbusbill.customer.dto; import jakarta.validation.constraints.*; import java.math.BigDecimal; import java.util.UUID;
+public record InternalTransferRequest(@NotNull UUID customerId,@NotBlank @Size(max=100) String clientReferenceId,@NotNull UUID sourceAccountId,@NotNull UUID sourceBridgeAccountId,@NotNull UUID destinationBridgeAccountId,@NotNull UUID destinationAccountId,@NotBlank String productCode,@NotNull @DecimalMin("0.01") BigDecimal amount,@NotBlank @Size(min=3,max=3) String currency){}

@@ -1,0 +1,1 @@
+package com.nimbusbill.customer.repository; import com.nimbusbill.customer.entity.FundReservation; import org.springframework.data.jpa.repository.JpaRepository; import java.util.UUID; public interface FundReservationRepository extends JpaRepository<FundReservation,UUID>{}

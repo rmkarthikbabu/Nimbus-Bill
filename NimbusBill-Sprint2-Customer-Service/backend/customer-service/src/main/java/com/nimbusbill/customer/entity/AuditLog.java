@@ -19,5 +19,5 @@ public class AuditLog {
     public UUID getId(){return id;} public UUID getCustomerId(){return customerId;} public void setCustomerId(UUID v){customerId=v;}
     public String getAction(){return action;} public void setAction(String v){action=v;} public String getOldValue(){return oldValue;} public void setOldValue(String v){oldValue=v;}
     public String getNewValue(){return newValue;} public void setNewValue(String v){newValue=v;} public String getActor(){return actor;} public void setActor(String v){actor=v;}
-    public String getIpAddress(){return ipAddress;} public void setIpAddress(String v){ipAddress=v;} public Instant getCreatedAt(){return createdAt;}
+    public String getIpAddress(){return ipAddress;} public void setIpAddress(String v){ipAddress=v;} public Instant getCreatedAt(){return createdAt;} public void setCreatedAt(Instant v){createdAt=v;}
 }

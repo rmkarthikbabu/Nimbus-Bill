@@ -1,0 +1,1 @@
+package com.nimbusbill.customer.dto;import java.time.Instant;import java.util.UUID;public record PricingAuditResponse(UUID id,String entityType,UUID entityId,String action,String actor,String actorRole,String oldValue,String newValue,String comments,String ipAddress,Instant createdAt){}

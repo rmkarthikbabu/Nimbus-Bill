@@ -1,0 +1,2 @@
+package com.nimbusbill.customer.repository; import com.nimbusbill.customer.entity.TransferTransaction; import org.springframework.data.jpa.repository.JpaRepository; import java.util.*;
+public interface TransferTransactionRepository extends JpaRepository<TransferTransaction,UUID>{Optional<TransferTransaction> findByCustomerIdAndClientReferenceId(UUID customerId,String clientReferenceId);List<TransferTransaction> findByCustomerIdOrderByCreatedAtDesc(UUID customerId);}

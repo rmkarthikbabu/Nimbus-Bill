@@ -1,0 +1,9 @@
+package com.nimbusbill.customer.controller;
+import com.nimbusbill.customer.dto.*; import com.nimbusbill.customer.service.InternalTransferService; import jakarta.validation.Valid; import org.springframework.http.*; import org.springframework.security.access.prepost.PreAuthorize; import org.springframework.web.bind.annotation.*; import java.net.URI; import java.util.*;
+@RestController @RequestMapping("/api/v1") public class InternalTransferController{private final InternalTransferService service;public InternalTransferController(InternalTransferService s){service=s;}
+ @PostMapping("/transfer-accounts") @PreAuthorize("hasRole('ADMIN')") ResponseEntity<TransferAccountResponse> account(@Valid @RequestBody TransferAccountRequest r){TransferAccountResponse a=service.createAccount(r);return ResponseEntity.created(URI.create("/api/v1/transfer-accounts/"+a.id())).body(a);}
+ @GetMapping("/transfer-accounts/{id}") @PreAuthorize("hasAnyRole('ADMIN','OPERATIONS','AUDITOR','READ_ONLY')") TransferAccountResponse account(@PathVariable UUID id){return service.getAccount(id);}
+ @PostMapping("/internal-transfers") @PreAuthorize("hasAnyRole('ADMIN','OPERATIONS')") ResponseEntity<InternalTransferResponse> initiate(@Valid @RequestBody InternalTransferRequest r){InternalTransferResponse t=service.initiate(r);return ResponseEntity.status(HttpStatus.CREATED).location(URI.create("/api/v1/internal-transfers/"+t.transferId())).body(t);}
+ @GetMapping("/internal-transfers/{id}") @PreAuthorize("hasAnyRole('ADMIN','BILLING_MANAGER','FINANCE','OPERATIONS','AUDITOR','READ_ONLY')") InternalTransferResponse get(@PathVariable UUID id){return service.get(id);}
+ @GetMapping("/internal-transfers") @PreAuthorize("hasAnyRole('ADMIN','BILLING_MANAGER','FINANCE','OPERATIONS','AUDITOR','READ_ONLY')") List<InternalTransferResponse> list(@RequestParam UUID customerId){return service.list(customerId);}
+}

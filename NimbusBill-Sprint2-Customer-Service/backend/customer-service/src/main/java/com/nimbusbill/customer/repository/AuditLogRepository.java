@@ -1,5 +1,5 @@
 package com.nimbusbill.customer.repository;
 import com.nimbusbill.customer.entity.AuditLog;
 import org.springframework.data.jpa.repository.JpaRepository;
-import java.util.List; import java.util.UUID;
-public interface AuditLogRepository extends JpaRepository<AuditLog,UUID>{List<AuditLog> findByCustomerIdOrderByCreatedAtDesc(UUID customerId);}
+import java.util.*;
+public interface AuditLogRepository extends JpaRepository<AuditLog,UUID>{List<AuditLog> findByCustomerIdOrderByCreatedAtDesc(UUID customerId);Optional<AuditLog> findFirstByCustomerIdOrderByCreatedAtDesc(UUID customerId);}

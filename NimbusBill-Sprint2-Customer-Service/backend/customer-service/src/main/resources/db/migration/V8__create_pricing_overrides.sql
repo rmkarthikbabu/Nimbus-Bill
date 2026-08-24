@@ -1,0 +1,25 @@
+CREATE TABLE pricing_overrides (
+ id UUID PRIMARY KEY,
+ customer_id UUID NOT NULL REFERENCES customers(id),
+ product_id UUID NOT NULL REFERENCES payment_products(id),
+ charge_type VARCHAR(20) NOT NULL,
+ fixed_fee NUMERIC(19,4),
+ percentage_rate NUMERIC(12,6),
+ minimum_fee NUMERIC(19,4),
+ maximum_fee NUMERIC(19,4),
+ tax_rate NUMERIC(8,4) NOT NULL DEFAULT 0,
+ effective_from DATE NOT NULL,
+ effective_to DATE,
+ active BOOLEAN NOT NULL DEFAULT TRUE,
+ reason VARCHAR(300),
+ created_by VARCHAR(150) NOT NULL,
+ created_at TIMESTAMPTZ NOT NULL,
+ updated_at TIMESTAMPTZ NOT NULL,
+ version BIGINT NOT NULL DEFAULT 0,
+ CONSTRAINT chk_override_charge_type CHECK(charge_type IN ('FIXED','PERCENTAGE','HYBRID')),
+ CONSTRAINT chk_override_dates CHECK(effective_to IS NULL OR effective_to >= effective_from),
+ CONSTRAINT chk_override_values CHECK(fixed_fee IS NULL OR fixed_fee >= 0),
+ CONSTRAINT chk_override_percentage CHECK(percentage_rate IS NULL OR percentage_rate >= 0),
+ CONSTRAINT chk_override_fee_range CHECK(minimum_fee IS NULL OR maximum_fee IS NULL OR minimum_fee <= maximum_fee)
+);
+CREATE INDEX idx_pricing_override_match ON pricing_overrides(customer_id,product_id,active,effective_from,effective_to);

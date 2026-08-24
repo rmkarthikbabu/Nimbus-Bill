@@ -1,0 +1,2 @@
+package com.nimbusbill.customer.dto; import com.nimbusbill.customer.entity.PricingUnit; import java.math.BigDecimal; import java.time.*; import java.util.UUID;
+public record PricingOverrideResponse(UUID id,UUID customerId,UUID productId,String productCode,String productName,PricingUnit chargeType,BigDecimal fixedFee,BigDecimal percentageRate,BigDecimal minimumFee,BigDecimal maximumFee,BigDecimal taxRate,LocalDate effectiveFrom,LocalDate effectiveTo,boolean active,String reason,String createdBy,Instant createdAt,Instant updatedAt){}
