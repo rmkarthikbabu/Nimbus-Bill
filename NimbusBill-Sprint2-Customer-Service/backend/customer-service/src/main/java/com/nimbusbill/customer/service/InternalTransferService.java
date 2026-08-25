@@ -47,6 +47,12 @@ public class InternalTransferService {
         return account(accounts.findById(id).orElseThrow(()->new ResourceNotFoundException("Transfer account not found: "+id)));
     }
 
+    @Transactional(readOnly=true)
+    public List<TransferAccountResponse> listAccounts(UUID customerId) {
+        customers.findById(customerId).orElseThrow(()->new ResourceNotFoundException("Customer not found: "+customerId));
+        return accounts.findByCustomerIdOrCustomerIsNullOrderByAccountName(customerId).stream().map(this::account).toList();
+    }
+
     public InternalTransferResponse initiate(InternalTransferRequest r) {
         String clientReferenceId=r.clientReferenceId().trim();
         Optional<TransferTransaction> duplicate=transfers.findByCustomerIdAndClientReferenceId(r.customerId(),clientReferenceId);
@@ -59,6 +65,7 @@ public class InternalTransferService {
         TransferAccount ya=locked.get(r.destinationBridgeAccountId()), destination=locked.get(r.destinationAccountId());
         validate(r,customer,source,xa,ya,destination);
         PricingPreviewResponse charge=pricing.priceCustomer(customer.getId(),r.productCode(),r.amount(),LocalDate.now());
+        if(!charge.currency().equalsIgnoreCase(r.currency())) throw new ConflictException("Pricing currency "+charge.currency()+" does not match transfer currency "+r.currency());
         PricingPlanVersion priceVersion=versions.findById(charge.versionId()).orElseThrow();
 
         TransferTransaction tx=new TransferTransaction(); tx.setClientReferenceId(clientReferenceId); tx.setCustomer(customer);

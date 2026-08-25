@@ -1,2 +1,2 @@
 package com.nimbusbill.customer.repository; import com.nimbusbill.customer.entity.TransferAccount; import jakarta.persistence.LockModeType; import org.springframework.data.jpa.repository.*; import java.util.*;
-public interface TransferAccountRepository extends JpaRepository<TransferAccount,UUID>{@Lock(LockModeType.PESSIMISTIC_WRITE) @Query("select a from TransferAccount a where a.id=:id") Optional<TransferAccount> lockById(UUID id);}
+public interface TransferAccountRepository extends JpaRepository<TransferAccount,UUID>{@Lock(LockModeType.PESSIMISTIC_WRITE) @Query("select a from TransferAccount a where a.id=:id") Optional<TransferAccount> lockById(UUID id);List<TransferAccount> findByCustomerIdOrCustomerIsNullOrderByAccountName(UUID customerId);}

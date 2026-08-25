@@ -1,2 +1,2 @@
 package com.nimbusbill.customer.dto; import jakarta.validation.constraints.*; import java.math.BigDecimal; import java.time.LocalDate; import java.util.UUID;
-public record PricingPreviewRequest(@NotNull UUID planId,@NotBlank String productCode,@NotNull @DecimalMin("0.01") BigDecimal amount,@NotNull LocalDate transactionDate){}
+public record PricingPreviewRequest(@NotNull UUID planId,@NotBlank String productCode,@NotNull @DecimalMin("0.01") BigDecimal amount,@NotNull LocalDate transactionDate,@Pattern(regexp="^[A-Z]{3}$") String currency){public PricingPreviewRequest(UUID planId,String productCode,BigDecimal amount,LocalDate transactionDate){this(planId,productCode,amount,transactionDate,null);}}
