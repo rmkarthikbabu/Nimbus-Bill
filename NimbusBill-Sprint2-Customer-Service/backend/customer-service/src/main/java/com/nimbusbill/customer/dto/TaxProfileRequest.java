@@ -1,0 +1,2 @@
+package com.nimbusbill.customer.dto; import jakarta.validation.constraints.*; import java.math.BigDecimal; import java.time.LocalDate;
+public record TaxProfileRequest(@Size(max=40) String taxIdentifier,@NotBlank @Pattern(regexp="[A-Za-z]{2}") String taxCountry,@Size(max=80) String taxRegion,@Size(max=80) String placeOfSupply,@NotNull @DecimalMin("0") @DecimalMax("100") BigDecimal defaultTaxRate,boolean taxExempt,@NotNull LocalDate effectiveFrom){}
