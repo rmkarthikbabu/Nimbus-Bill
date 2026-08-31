@@ -1,0 +1,2 @@
+package com.nimbusbill.customer.dto; import com.nimbusbill.customer.entity.BillingCycle; import jakarta.validation.constraints.*; import java.util.UUID;
+public record BillingAccountRequest(@NotNull UUID customerId,@NotBlank @Size(max=40) String accountCode,@NotBlank @Size(max=150) String accountName,@NotBlank @Pattern(regexp="[A-Za-z]{3}") String currency,@NotNull BillingCycle billingCycle,@Min(0) @Max(365) int paymentTermsDays){}

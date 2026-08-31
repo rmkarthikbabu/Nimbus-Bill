@@ -1,0 +1,7 @@
+package com.nimbusbill.customer.entity;
+import jakarta.persistence.*; import java.math.BigDecimal; import java.time.Instant; import java.util.UUID;
+@Entity @Table(name="billing_run_items") public class BillingRunItem {
+ @Id @GeneratedValue(strategy=GenerationType.UUID) private UUID id; @ManyToOne(optional=false) @JoinColumn(name="billing_run_id") private BillingRun billingRun; @OneToOne(optional=false) @JoinColumn(name="transaction_charge_id",unique=true) private TransactionCharge charge;
+ @Column(name="transaction_id",nullable=false) private UUID transactionId; @Column(name="product_code",nullable=false,length=30) private String productCode; @Column(name="base_fee",nullable=false,precision=19,scale=4) private BigDecimal baseFee; @Column(name="tax_amount",nullable=false,precision=19,scale=4) private BigDecimal taxAmount; @Column(name="total_amount",nullable=false,precision=19,scale=4) private BigDecimal totalAmount; @Column(nullable=false,length=3) private String currency; @Column(name="created_at",nullable=false) private Instant createdAt; @PrePersist void create(){createdAt=Instant.now();}
+ public UUID getId(){return id;} public void setBillingRun(BillingRun v){billingRun=v;} public void setCharge(TransactionCharge v){charge=v;} public void setTransactionId(UUID v){transactionId=v;} public void setProductCode(String v){productCode=v;} public void setBaseFee(BigDecimal v){baseFee=v;} public void setTaxAmount(BigDecimal v){taxAmount=v;} public void setTotalAmount(BigDecimal v){totalAmount=v;} public void setCurrency(String v){currency=v;}
+}

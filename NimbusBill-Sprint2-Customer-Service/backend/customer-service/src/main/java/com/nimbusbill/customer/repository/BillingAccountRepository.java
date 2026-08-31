@@ -1,0 +1,2 @@
+package com.nimbusbill.customer.repository; import com.nimbusbill.customer.entity.BillingAccount; import org.springframework.data.jpa.repository.JpaRepository; import java.util.*;
+public interface BillingAccountRepository extends JpaRepository<BillingAccount,UUID>{List<BillingAccount> findByCustomerIdOrderByAccountName(UUID customerId);boolean existsByCustomerIdAndAccountCodeIgnoreCase(UUID customerId,String code);}
