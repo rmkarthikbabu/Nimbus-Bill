@@ -1,2 +1,2 @@
 package com.nimbusbill.customer.repository; import com.nimbusbill.customer.entity.InvoiceDelivery; import org.springframework.data.jpa.repository.JpaRepository; import java.util.*;
-public interface InvoiceDeliveryRepository extends JpaRepository<InvoiceDelivery,UUID>{List<InvoiceDelivery> findByInvoiceIdOrderByCreatedAtDesc(UUID invoiceId);}
+public interface InvoiceDeliveryRepository extends JpaRepository<InvoiceDelivery,UUID>{List<InvoiceDelivery> findByInvoiceIdOrderByCreatedAtDesc(UUID invoiceId);List<InvoiceDelivery> findByStatusAndAttemptCountLessThan(String status,int attempts);}

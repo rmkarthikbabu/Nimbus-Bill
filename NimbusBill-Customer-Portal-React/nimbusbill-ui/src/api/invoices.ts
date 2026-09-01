@@ -13,3 +13,5 @@ export const getTaxProfile=(customerId:string)=>apiRequest<TaxProfile>('/custome
 export const saveTaxProfile=(customerId:string,input:TaxProfileInput)=>apiRequest<TaxProfile>('/customers/'+customerId+'/tax-profile',{method:'PUT',body:JSON.stringify(input)});
 export const listDeliveries=(id:string)=>apiRequest<Delivery[]>('/invoices/'+id+'/deliveries');
 export const deliverInvoice=(id:string,channel:'EMAIL'|'WEBHOOK'|'API',destination:string)=>apiRequest<Delivery>('/invoices/'+id+'/deliveries',{method:'POST',body:JSON.stringify({channel,destination})});
+
+export async function downloadInvoiceDocument(id:string,invoiceNumber:string){const base=(import.meta.env.VITE_API_BASE_URL??'/api/v1').replace(/\/$/,'');const token=sessionStorage.getItem('access_token');const response=await fetch(`${base}/invoices/${id}/document`,{headers:token?{Authorization:`Bearer ${token}`}:{}});if(!response.ok)throw new Error(`Request failed (${response.status})`);const blob=await response.blob();const url=URL.createObjectURL(blob);const link=document.createElement('a');link.href=url;link.download=`${invoiceNumber}.pdf`;link.click();URL.revokeObjectURL(url);}
