@@ -1,0 +1,3 @@
+import {apiRequest} from './customers';
+export interface AnalyticsReport {fromDate:string;toDate:string;totalCustomers:number;activeCustomers:number;totalTransactions:number;completedTransactions:number;rejectedTransactions:number;transactionValue:number;totalInvoices:number;overdueInvoices:number;invoicedRevenue:number;collectedRevenue:number;transactionsByProduct:Record<string,number>;invoicesByStatus:Record<string,number>}
+export const getAnalyticsReport=(fromDate:string,toDate:string,customerId:string)=>{const p=new URLSearchParams({fromDate,toDate});if(customerId)p.set('customerId',customerId);return apiRequest<AnalyticsReport>('/reports/summary?'+p)};
