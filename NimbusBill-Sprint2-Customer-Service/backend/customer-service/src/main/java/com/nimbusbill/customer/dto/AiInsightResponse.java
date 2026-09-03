@@ -1,0 +1,1 @@
+package com.nimbusbill.customer.dto; import java.math.BigDecimal; import java.util.List; public record AiInsightResponse(long rejectedTransactions,long overdueInvoices,BigDecimal invoicedRevenue,BigDecimal nextMonthForecast,List<String> anomalies,List<String> recommendations){}

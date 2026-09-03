@@ -1,0 +1,1 @@
+package com.nimbusbill.customer.dto; import java.time.Instant; import java.util.*; public record AiAssistantResponse(String intent,String answer,List<String> sources,double confidence,Instant generatedAt){}

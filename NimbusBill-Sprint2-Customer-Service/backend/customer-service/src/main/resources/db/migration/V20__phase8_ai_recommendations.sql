@@ -1,0 +1,2 @@
+CREATE TABLE ai_recommendations (id UUID PRIMARY KEY, customer_id UUID REFERENCES customers(id), category VARCHAR(50) NOT NULL, title VARCHAR(200) NOT NULL, rationale TEXT NOT NULL, recommended_action TEXT NOT NULL, status VARCHAR(20) NOT NULL DEFAULT 'PENDING', created_by VARCHAR(255) NOT NULL, reviewed_by VARCHAR(255), review_comment VARCHAR(500), created_at TIMESTAMPTZ NOT NULL DEFAULT now(), reviewed_at TIMESTAMPTZ);
+CREATE INDEX idx_ai_recommendations_status ON ai_recommendations(status, created_at DESC);

@@ -1,0 +1,1 @@
+package com.nimbusbill.customer.repository; import com.nimbusbill.customer.entity.AiRecommendation; import org.springframework.data.jpa.repository.JpaRepository; import java.util.*; public interface AiRecommendationRepository extends JpaRepository<AiRecommendation,UUID>{List<AiRecommendation> findAllByOrderByCreatedAtDesc();}

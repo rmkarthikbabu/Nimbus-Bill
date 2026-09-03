@@ -1,0 +1,1 @@
+package com.nimbusbill.customer.repository; import com.nimbusbill.customer.entity.AiQueryAudit; import org.springframework.data.jpa.repository.JpaRepository; import java.util.*; public interface AiQueryAuditRepository extends JpaRepository<AiQueryAudit,UUID>{List<AiQueryAudit> findTop100ByOrderByCreatedAtDesc();}

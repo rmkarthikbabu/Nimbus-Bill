@@ -12,6 +12,7 @@ import ReceiptLongRounded from '@mui/icons-material/ReceiptLongRounded';
 import SwapHorizRounded from '@mui/icons-material/SwapHorizRounded';
 import OutboxRounded from '@mui/icons-material/OutboxRounded';
 import AssessmentRounded from '@mui/icons-material/AssessmentRounded';
+import PsychologyRounded from '@mui/icons-material/PsychologyRounded';
 import AdminPanelSettingsRounded from '@mui/icons-material/AdminPanelSettingsRounded';
 import SettingsRounded from '@mui/icons-material/SettingsRounded';
 import SearchRounded from '@mui/icons-material/SearchRounded';
@@ -24,7 +25,7 @@ import HelpOutlineRounded from '@mui/icons-material/HelpOutlineRounded';
 const drawerWidth=280;
 const customerPaths=['/customers','/customers/new','/customer-configuration'];
 const pricingPaths=['/pricing','/pricing-editor','/approval-queue','/pricing-versions','/pricing-overrides','/products'];
-const primaryItems=[['Dashboard','/',DashboardRounded],['Transactions','/transactions',SwapHorizRounded],['Event Outbox','/transaction-outbox',OutboxRounded],['Internal Transfers','/internal-transfers',AccountBalanceRounded],['Billing Accounts','/billing-accounts',AccountBalanceRounded],['Invoices','/invoices',ReceiptLongRounded],['Reports','/reports',AssessmentRounded],['Administration','/admin',AdminPanelSettingsRounded],['Settings','/settings',SettingsRounded]] as const;
+const primaryItems=[['Dashboard','/',DashboardRounded],['Transactions','/transactions',SwapHorizRounded],['Event Outbox','/transaction-outbox',OutboxRounded],['Internal Transfers','/internal-transfers',AccountBalanceRounded],['Billing Accounts','/billing-accounts',AccountBalanceRounded],['Invoices','/invoices',ReceiptLongRounded],['Reports','/reports',AssessmentRounded],['AI Assistant','/ai-assistant',PsychologyRounded],['AI Insights','/ai-insights',AssessmentRounded],['Administration','/admin',AdminPanelSettingsRounded],['Settings','/settings',SettingsRounded]] as const;
 const customerItems=[['Customer List','/customers',GroupsRounded],['Onboard Customer','/customers/new',PersonAddRounded],['Product & Pricing Configuration','/customer-configuration',TuneRounded]] as const;
 const pricingItems=[['Pricing Overview','/pricing',PriceChangeRounded],['Pricing Editor','/pricing-editor',TuneRounded],['Approval Queue','/approval-queue',PriceChangeRounded],['Pricing Versions','/pricing-versions',PriceChangeRounded],['Pricing Overrides','/pricing-overrides',PriceChangeRounded],['Payment Products','/products',Inventory2Rounded]] as const;
 
